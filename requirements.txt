@@ -8,11 +8,11 @@ fonttools==4.57.0
     # via matplotlib
 kiwisolver==1.4.8
     # via matplotlib
-matplotlib==3.10.1
+matplotlib>=3.7.0
     # via
     #   rwr (pyproject.toml)
     #   seaborn
-numpy==2.2.5
+numpy>=1.24.0
     # via
     #   rwr (pyproject.toml)
     #   contourpy
@@ -21,7 +21,7 @@ numpy==2.2.5
     #   seaborn
 packaging==25.0
     # via matplotlib
-pandas==2.2.3
+pandas>=2.0.0
     # via
     #   rwr (pyproject.toml)
     #   seaborn
@@ -35,7 +35,7 @@ python-dateutil==2.9.0.post0
     #   pandas
 pytz==2025.2
     # via pandas
-seaborn==0.13.2
+seaborn>=0.12.0
     # via rwr (pyproject.toml)
 six==1.17.0
     # via python-dateutil
