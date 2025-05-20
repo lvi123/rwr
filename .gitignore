@@ -78,4 +78,7 @@ var/
 wheels/
 *.egg-info/
 .installed.cfg
-*.egg 
+*.egg
+
+# Generated files
+report_visualization.png 
