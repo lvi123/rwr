@@ -141,14 +141,14 @@ cursor3 = Cursor(axes[2], useblit=True, color='gray', linewidth=1)
 axes[2].format_coord = lambda x, y: f'Time: {num2date(x).strftime("%b %d, %Y, %I:%M:%S %p")}, Ratio: {y:.4f}'
 
 # Calculate appropriate y-axis limits for compression ratio based on actual data
-ratio_min = max(0, df_rate_stable['compression_ratio'].min())  # Ensure minimum is not negative
+ratio_min = df_rate_stable['compression_ratio'].min()
 ratio_max = df_rate_stable['compression_ratio'].max()
 ratio_range = max(0.001, ratio_max - ratio_min)  # Ensure minimum range to avoid too narrow display
 
-# Use multiplicative padding for ratio (since it's always positive)
+# Use additive padding for ratio to handle negative values
 padding_factor = 0.2  # 20% padding on each side
-y_min = max(0, ratio_min * (1 - padding_factor))  # Ensure we never go below 0
-y_max = ratio_max * (1 + padding_factor)
+y_min = ratio_min - (ratio_range * padding_factor)
+y_max = ratio_max + (ratio_range * padding_factor)
 
 axes[2].set_ylim(y_min, y_max)
 print(f"Setting compression ratio y-axis limits to {y_min:.6f} - {y_max:.6f} (min: {ratio_min:.6f}, max: {ratio_max:.6f})")
