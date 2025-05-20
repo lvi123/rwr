@@ -3,7 +3,7 @@ import matplotlib.pyplot as plt
 import seaborn as sns
 import os
 import numpy as np
-from matplotlib.dates import HourLocator, DateFormatter
+from matplotlib.dates import HourLocator, DateFormatter, num2date
 from matplotlib.ticker import FuncFormatter
 import argparse
 from datetime import datetime
@@ -106,7 +106,7 @@ axes[0].legend(fontsize=12)
 
 # Add cursor with tooltip for plot 1
 cursor1 = Cursor(axes[0], useblit=True, color='gray', linewidth=1)
-axes[0].format_coord = lambda x, y: f'Time: {pd.Timestamp(x).strftime("%b %d, %Y, %I:%M:%S %p")}, Value: {format_kb(y, None)}'
+axes[0].format_coord = lambda x, y: f'Time: {num2date(x).strftime("%b %d, %Y, %I:%M:%S %p")}, Value: {format_kb(y, None)}'
 
 # Format y-axis for plot 1 to show KB values properly
 def format_kb(x, p):
@@ -130,7 +130,7 @@ axes[1].legend(fontsize=12)
 
 # Add cursor with tooltip for plot 2
 cursor2 = Cursor(axes[1], useblit=True, color='gray', linewidth=1)
-axes[1].format_coord = lambda x, y: f'Time: {pd.Timestamp(x).strftime("%b %d, %Y, %I:%M:%S %p")}, Rate: {format_kb(y, None)}/min'
+axes[1].format_coord = lambda x, y: f'Time: {num2date(x).strftime("%b %d, %Y, %I:%M:%S %p")}, Rate: {format_kb(y, None)}/min'
 
 # Plot 3: Compression ratio
 line5 = sns.lineplot(x='timestamp', y='compression_ratio', 
@@ -138,7 +138,7 @@ line5 = sns.lineplot(x='timestamp', y='compression_ratio',
 
 # Add cursor with tooltip for plot 3
 cursor3 = Cursor(axes[2], useblit=True, color='gray', linewidth=1)
-axes[2].format_coord = lambda x, y: f'Time: {pd.Timestamp(x).strftime("%b %d, %Y, %I:%M:%S %p")}, Ratio: {y:.4f}'
+axes[2].format_coord = lambda x, y: f'Time: {num2date(x).strftime("%b %d, %Y, %I:%M:%S %p")}, Ratio: {y:.4f}'
 
 # Calculate appropriate y-axis limits for compression ratio based on actual data
 ratio_min = max(0, df_rate_stable['compression_ratio'].min())  # Ensure minimum is not negative
@@ -159,11 +159,12 @@ axes[2].legend(fontsize=12)
 
 # Format x-axis dates on all plots
 for ax in axes:
-    # Set major ticks every hour
-    ax.xaxis.set_major_locator(HourLocator(interval=1))
-    # Format the date to show only hour and minute
+    # Set major ticks every 2 hours to reduce density
+    ax.xaxis.set_major_locator(HourLocator(interval=2))
+    # Format the date to show hour and minute
     ax.xaxis.set_major_formatter(DateFormatter('%H:%M'))
-    plt.setp(ax.get_xticklabels(), rotation=0, ha='center')
+    # Rotate labels for better readability
+    plt.setp(ax.get_xticklabels(), rotation=45, ha='right')
 
 # Add an overall x-axis label at the bottom
 axes[2].set_xlabel('Time (HH:MM)', fontsize=12)
