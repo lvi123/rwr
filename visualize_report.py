@@ -74,7 +74,7 @@ df['uncompressed'] = df['uncompressed'].str.replace(',', '').astype(float)  # Da
 df['uncompressed_rate'] = df['uncompressed'].diff() / df['timestamp'].diff().dt.total_seconds() * 60  # KB per minute
 df['compressed_rate'] = df['compressed'].diff() / df['timestamp'].diff().dt.total_seconds() * 60  # KB per minute
 # Calculate compression ratio based on rates instead of totals
-df['compression_ratio'] = df['compressed_rate'] / df['uncompressed_rate']  # instantaneous compression ratio
+df['compression_ratio'] = df['uncompressed_rate'] / df['compressed_rate']  # instantaneous compression ratio
 
 # Print diagnostic information about compression ratio
 print("Compression Ratio Statistics (based on rates):")
