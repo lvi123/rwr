@@ -39,11 +39,22 @@ df['timestamp'] = pd.to_datetime(df['timestamp'], format="%b %d, %Y, %I:%M:%S %p
 
 # Apply timestamp filters if provided
 if args.start:
-    start_time = pd.to_datetime(args.start, format="%b %d, %Y, %I:%M:%S %p")
-    df = df[df['timestamp'] >= start_time]
+    try:
+        start_time = pd.to_datetime(args.start, format="%b %d, %Y, %I:%M:%S %p")
+        df = df[df['timestamp'] >= start_time]
+    except ValueError as e:
+        print(f"Error parsing start timestamp: {args.start}")
+        print("Expected format: 'MMM DD, YYYY, HH:MM:SS AM/PM' (e.g., 'Jan 01, 2024, 12:00:00 PM')")
+        exit(1)
+
 if args.end:
-    end_time = pd.to_datetime(args.end, format="%b %d, %Y, %I:%M:%S %p")
-    df = df[df['timestamp'] <= end_time]
+    try:
+        end_time = pd.to_datetime(args.end, format="%b %d, %Y, %I:%M:%S %p")
+        df = df[df['timestamp'] <= end_time]
+    except ValueError as e:
+        print(f"Error parsing end timestamp: {args.end}")
+        print("Expected format: 'MMM DD, YYYY, HH:MM:SS AM/PM' (e.g., 'Jan 01, 2024, 12:00:00 PM')")
+        exit(1)
 
 if len(df) == 0:
     print("No data found within the specified time range")
