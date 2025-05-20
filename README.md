@@ -1,5 +1,10 @@
-uv pip compile pyproject.toml -o requirements.txt
+# Setup
+
+```bash
+# Install dependencies and create virtual environment
 uv sync
-uv venv
+
+# Activate virtual environment
 source .venv/bin/activate
+```
 
