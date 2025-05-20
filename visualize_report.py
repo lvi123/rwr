@@ -7,6 +7,7 @@ from matplotlib.dates import HourLocator, DateFormatter
 from matplotlib.ticker import FuncFormatter
 import argparse
 from datetime import datetime
+from matplotlib.widgets import Cursor
 
 # Set up argument parser
 parser = argparse.ArgumentParser(description='Visualize compression report data')
@@ -95,13 +96,17 @@ df_rate_stable = df_rate.iloc[skip_initial:]
 fig, axes = plt.subplots(3, 1, figsize=(12, 15), sharex=True)
 
 # Plot 1: Line plot showing both compressed and uncompressed data
-sns.lineplot(x='timestamp', y='uncompressed', 
+line1 = sns.lineplot(x='timestamp', y='uncompressed', 
              data=df, label='Uncompressed', linewidth=2, ax=axes[0])
-sns.lineplot(x='timestamp', y='compressed', 
+line2 = sns.lineplot(x='timestamp', y='compressed', 
              data=df, label='Compressed', linewidth=2, ax=axes[0])
 axes[0].set_title('Accumulated Data Over Time', fontsize=16)
 axes[0].set_ylabel('Data (KB)', fontsize=12)
 axes[0].legend(fontsize=12)
+
+# Add cursor with tooltip for plot 1
+cursor1 = Cursor(axes[0], useblit=True, color='gray', linewidth=1)
+axes[0].format_coord = lambda x, y: f'Time: {pd.Timestamp(x).strftime("%b %d, %Y, %I:%M:%S %p")}, Value: {format_kb(y, None)}'
 
 # Format y-axis for plot 1 to show KB values properly
 def format_kb(x, p):
@@ -115,17 +120,25 @@ def format_kb(x, p):
 axes[0].yaxis.set_major_formatter(FuncFormatter(format_kb))
 
 # Plot 2: Data rates
-sns.lineplot(x='timestamp', y='uncompressed_rate', 
+line3 = sns.lineplot(x='timestamp', y='uncompressed_rate', 
              data=df_rate, label='Uncompressed Rate', linewidth=2, ax=axes[1])
-sns.lineplot(x='timestamp', y='compressed_rate', 
+line4 = sns.lineplot(x='timestamp', y='compressed_rate', 
              data=df_rate, label='Compressed Rate', linewidth=2, ax=axes[1])
 axes[1].set_title('Data Rates Over Time', fontsize=16)
 axes[1].set_ylabel('Rate (KB/minute)', fontsize=12)
 axes[1].legend(fontsize=12)
 
+# Add cursor with tooltip for plot 2
+cursor2 = Cursor(axes[1], useblit=True, color='gray', linewidth=1)
+axes[1].format_coord = lambda x, y: f'Time: {pd.Timestamp(x).strftime("%b %d, %Y, %I:%M:%S %p")}, Rate: {format_kb(y, None)}/min'
+
 # Plot 3: Compression ratio
-sns.lineplot(x='timestamp', y='compression_ratio', 
+line5 = sns.lineplot(x='timestamp', y='compression_ratio', 
              data=df_rate_stable, label='Compression Ratio', linewidth=2, color='red', ax=axes[2])
+
+# Add cursor with tooltip for plot 3
+cursor3 = Cursor(axes[2], useblit=True, color='gray', linewidth=1)
+axes[2].format_coord = lambda x, y: f'Time: {pd.Timestamp(x).strftime("%b %d, %Y, %I:%M:%S %p")}, Ratio: {y:.4f}'
 
 # Calculate appropriate y-axis limits for compression ratio based on actual data
 ratio_min = max(0, df_rate_stable['compression_ratio'].min())  # Ensure minimum is not negative
