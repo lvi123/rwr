@@ -6,6 +6,7 @@ import numpy as np
 from matplotlib.dates import HourLocator, DateFormatter
 from matplotlib.ticker import FuncFormatter
 import argparse
+from datetime import datetime
 
 # Set up argument parser
 parser = argparse.ArgumentParser(description='Visualize compression report data')
@@ -13,6 +14,10 @@ parser.add_argument('input_file', nargs='?', default='report.csv',
                    help='Input CSV file (default: report.csv)')
 parser.add_argument('--name', '-n', required=True,
                    help='Name to filter the data on')
+parser.add_argument('--start', '-s',
+                   help='Start timestamp (format: "MMM DD, YYYY, HH:MM:SS AM/PM")')
+parser.add_argument('--end', '-e',
+                   help='End timestamp (format: "MMM DD, YYYY, HH:MM:SS AM/PM")')
 args = parser.parse_args()
 
 # Set Seaborn style
@@ -31,6 +36,19 @@ if len(df) == 0:
 
 # Convert timestamp to datetime and numeric columns
 df['timestamp'] = pd.to_datetime(df['timestamp'], format="%b %d, %Y, %I:%M:%S %p")
+
+# Apply timestamp filters if provided
+if args.start:
+    start_time = pd.to_datetime(args.start, format="%b %d, %Y, %I:%M:%S %p")
+    df = df[df['timestamp'] >= start_time]
+if args.end:
+    end_time = pd.to_datetime(args.end, format="%b %d, %Y, %I:%M:%S %p")
+    df = df[df['timestamp'] <= end_time]
+
+if len(df) == 0:
+    print("No data found within the specified time range")
+    exit(1)
+
 df['compressed'] = df['compressed'].str.replace(',', '').astype(float)  # Data in KB
 df['uncompressed'] = df['uncompressed'].str.replace(',', '').astype(float)  # Data in KB
 
