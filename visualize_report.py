@@ -25,7 +25,13 @@ sns.set(style="darkgrid")
 
 # Read the CSV file
 csv_path = os.path.join(os.path.dirname(__file__), args.input_file)
-df = pd.read_csv(csv_path)
+try:
+    df = pd.read_csv(csv_path)
+except FileNotFoundError:
+    print(f"Error: Could not find file '{args.input_file}'")
+    print(f"Full path attempted: {csv_path}")
+    print("Please make sure the file exists and you have the correct permissions.")
+    exit(1)
 
 # Filter data by name
 df = df[df['Name'] == args.name]
